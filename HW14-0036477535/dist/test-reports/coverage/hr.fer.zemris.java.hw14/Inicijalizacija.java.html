@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Inicijalizacija.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">HW14-0036477535</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.hw14</a> &gt; <span class="el_source">Inicijalizacija.java</span></div><h1>Inicijalizacija.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.hw14;
+
+import hr.fer.zemris.java.hw14.dao.DAOException;
+
+import java.beans.PropertyVetoException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Properties;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
+
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.mchange.v2.c3p0.DataSources;
+
+/**
+ * {@link ServletContextListener} which initializes the database when the server
+ * starts.
+ * 
+ * @author Marin Maršić
+ *
+ */
+@WebListener
+<span class="nc" id="L36">public class Inicijalizacija implements ServletContextListener {</span>
+
+	@Override
+	public void contextInitialized(ServletContextEvent sce) {
+
+<span class="nc" id="L41">		Properties serverPproperties = new Properties();</span>
+		try {
+<span class="nc" id="L43">			InputStream input = new FileInputStream(sce.getServletContext()</span>
+<span class="nc" id="L44">					.getRealPath(&quot;/WEB-INF/dbsettings.properties&quot;));</span>
+<span class="nc" id="L45">			serverPproperties.load(input);</span>
+<span class="nc" id="L46">		} catch (IOException e) {</span>
+<span class="nc" id="L47">			throw new RuntimeException(</span>
+<span class="nc" id="L48">					&quot;Error while reading dbsettings.properties.&quot;);</span>
+		}
+
+		// initialization
+<span class="nc" id="L52">		String host = serverPproperties.getProperty(&quot;host&quot;);</span>
+<span class="nc" id="L53">		String port = serverPproperties.getProperty(&quot;port&quot;);</span>
+<span class="nc" id="L54">		String dbName = serverPproperties.getProperty(&quot;name&quot;);</span>
+<span class="nc" id="L55">		String user = serverPproperties.getProperty(&quot;user&quot;);</span>
+<span class="nc" id="L56">		String password = serverPproperties.getProperty(&quot;password&quot;);</span>
+
+<span class="nc" id="L58">		String connectionURL = &quot;jdbc:derby://&quot; + host + &quot;:&quot; + port + &quot;/&quot;</span>
+<span class="nc" id="L59">				+ dbName + &quot;;user=&quot; + user + &quot;;password=&quot; + password + &quot;&quot;;</span>
+
+<span class="nc" id="L61">		ComboPooledDataSource cpds = new ComboPooledDataSource();</span>
+		try {
+<span class="nc" id="L63">			cpds.setDriverClass(&quot;org.apache.derby.jdbc.ClientDriver&quot;);</span>
+<span class="nc" id="L64">		} catch (PropertyVetoException e1) {</span>
+<span class="nc" id="L65">			throw new RuntimeException(&quot;Error initializing the pool.&quot;, e1);</span>
+		}
+<span class="nc" id="L67">		cpds.setJdbcUrl(connectionURL);</span>
+
+<span class="nc" id="L69">		sce.getServletContext().setAttribute(&quot;hr.fer.zemris.dbpool&quot;, cpds);</span>
+
+		try {
+<span class="nc" id="L72">			Connection connection = cpds.getConnection();</span>
+<span class="nc" id="L73">			DatabaseMetaData dbmd = connection.getMetaData();</span>
+<span class="nc" id="L74">			ResultSet rs = dbmd.getTables(null, null, &quot;POLLS&quot;, null);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">			if (!rs.next()) {</span>
+<span class="nc" id="L76">				makePollsTable(connection, sce);</span>
+			}
+<span class="nc" id="L78">			rs = dbmd.getTables(null, null, &quot;POLLOPTIONS&quot;, null);</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">			if (!rs.next()) {</span>
+<span class="nc" id="L80">				makePollOptionsTable(connection, sce);</span>
+			}
+<span class="nc" id="L82">		} catch (SQLException e) {</span>
+		}
+
+<span class="nc" id="L85">	}</span>
+
+	/**
+	 * Creates the PollOptions table in the database.
+	 * @param con Given connection.
+	 * @param sce {@link ServletContextEvent}.
+	 */
+	private void makePollOptionsTable(Connection con, ServletContextEvent sce) {
+		try {
+<span class="nc" id="L94">			Statement sta = con.createStatement();</span>
+<span class="nc" id="L95">			sta.executeUpdate(&quot;CREATE TABLE PollOptions (&quot;</span>
+					+ &quot;id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY&quot;
+					+ &quot;, optionTitle VARCHAR(100) NOT NULL&quot;
+					+ &quot;, optionLink VARCHAR(150) NOT NULL&quot; + &quot;, pollID BIGINT&quot;
+					+ &quot;, votesCount BIGINT&quot;
+					+ &quot;, FOREIGN KEY (pollID) REFERENCES Polls(id))&quot;);
+			try {
+<span class="nc" id="L102">				sta.close();</span>
+<span class="nc" id="L103">			} catch (Exception e) {</span>
+			}
+
+<span class="nc" id="L106">		} catch (Exception ex) {</span>
+<span class="nc" id="L107">			throw new DAOException(&quot;Error creating the 'PollOptions' table&quot;, ex);</span>
+		}
+
+<span class="nc" id="L110">		String fileName = sce.getServletContext().getRealPath(</span>
+<span class="nc" id="L111">				&quot;/WEB-INF/glasanje-definicija.txt&quot;);</span>
+
+		try {
+<span class="nc" id="L114">			List&lt;String&gt; lines = Files.readAllLines(Paths.get(fileName),</span>
+<span class="nc" id="L115">					StandardCharsets.UTF_8);</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">			for (String line : lines) {</span>
+<span class="nc" id="L117">				String[] separated = line.split(&quot;\t&quot;);</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">				if (!line.trim().isEmpty()) {</span>
+<span class="nc" id="L119">					PreparedStatement pst = null;</span>
+
+					try {
+<span class="nc" id="L122">						pst = con.prepareStatement(</span>
+<span class="nc" id="L123">								&quot;INSERT INTO PollOptions (optionTitle, optionLink, votesCount, pollID)&quot;</span>
+										+ &quot; values (?,?,?,?)&quot;,
+<span class="nc" id="L125">								Statement.RETURN_GENERATED_KEYS);</span>
+<span class="nc" id="L126">						pst.setString(1, separated[0]);</span>
+<span class="nc" id="L127">						pst.setString(2, separated[1]);</span>
+<span class="nc" id="L128">						pst.setLong(3, 0);</span>
+<span class="nc" id="L129">						pst.setLong(4, Integer.valueOf(separated[2]));</span>
+
+<span class="nc" id="L131">						pst.executeUpdate();</span>
+
+<span class="nc" id="L133">					} catch (SQLException ex) {</span>
+<span class="nc" id="L134">						ex.printStackTrace();</span>
+<span class="nc" id="L135">					} finally {</span>
+						try {
+<span class="nc" id="L137">							pst.close();</span>
+<span class="nc" id="L138">						} catch (SQLException ex) {</span>
+<span class="nc" id="L139">							ex.printStackTrace();</span>
+						}
+<span class="nc" id="L141">					}</span>
+				}
+			}
+<span class="nc" id="L144">		} catch (IOException e) {</span>
+		}
+
+<span class="nc" id="L147">	}</span>
+
+	/**
+	 * Creates the Polls table in the database.
+	 * @param con Given connection.
+	 * @param sce {@link ServletContextEvent}.
+	 */
+	private void makePollsTable(Connection con, ServletContextEvent sce) {
+		try {
+
+<span class="nc" id="L157">			Statement sta = con.createStatement();</span>
+<span class="nc" id="L158">			sta.executeUpdate(&quot;CREATE TABLE Polls (&quot;</span>
+					+ &quot;id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY&quot;
+					+ &quot;, title VARCHAR(150) NOT NULL&quot;
+					+ &quot;, message CLOB(2048) NOT NULL)&quot;);
+
+<span class="nc" id="L163">		} catch (Exception ex) {</span>
+<span class="nc" id="L164">			throw new DAOException(&quot;Error creating the 'Polls' table&quot;, ex);</span>
+		}
+
+<span class="nc" id="L167">		PreparedStatement pst = null;</span>
+
+		try {
+<span class="nc" id="L170">			pst = con.prepareStatement(</span>
+<span class="nc" id="L171">					&quot;INSERT INTO Polls (title, message) values (?,?)&quot;,</span>
+<span class="nc" id="L172">					Statement.RETURN_GENERATED_KEYS);</span>
+<span class="nc" id="L173">			pst.setString(1, &quot;Glasanje za omiljeni bend&quot;);</span>
+<span class="nc" id="L174">			pst.setString(2,</span>
+<span class="nc" id="L175">					&quot;Od sljedećih bendova, koji Vam je bend najdraži? &quot;</span>
+							+ &quot;Kliknite na link kako biste glasali!.&quot;);
+
+<span class="nc" id="L178">			pst.executeUpdate();</span>
+
+<span class="nc" id="L180">		} catch (SQLException ex) {</span>
+<span class="nc" id="L181">			ex.printStackTrace();</span>
+<span class="nc" id="L182">		} finally {</span>
+			try {
+<span class="nc" id="L184">				pst.close();</span>
+<span class="nc" id="L185">			} catch (SQLException ex) {</span>
+<span class="nc" id="L186">				ex.printStackTrace();</span>
+			}
+<span class="nc" id="L188">		}</span>
+
+		try {
+<span class="nc" id="L191">			pst = con.prepareStatement(</span>
+<span class="nc" id="L192">					&quot;INSERT INTO Polls (title, message) values (?,?)&quot;,</span>
+<span class="nc" id="L193">					Statement.RETURN_GENERATED_KEYS);</span>
+<span class="nc" id="L194">			pst.setString(1, &quot;Glasanje za omiljenu Disney princezu&quot;);</span>
+<span class="nc" id="L195">			pst.setString(2, &quot;Koja Disneyeva princeza si ti?&quot;);</span>
+
+<span class="nc" id="L197">			pst.executeUpdate();</span>
+
+<span class="nc" id="L199">		} catch (SQLException ex) {</span>
+<span class="nc" id="L200">			ex.printStackTrace();</span>
+<span class="nc" id="L201">		} finally {</span>
+			try {
+<span class="nc" id="L203">				pst.close();</span>
+<span class="nc" id="L204">			} catch (SQLException ex) {</span>
+<span class="nc" id="L205">				ex.printStackTrace();</span>
+			}
+<span class="nc" id="L207">		}</span>
+<span class="nc" id="L208">	}</span>
+
+	@Override
+	public void contextDestroyed(ServletContextEvent sce) {
+<span class="nc" id="L212">		ComboPooledDataSource cpds = (ComboPooledDataSource) sce</span>
+<span class="nc" id="L213">				.getServletContext().getAttribute(&quot;hr.fer.zemris.dbpool&quot;);</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">		if (cpds != null) {</span>
+			try {
+<span class="nc" id="L216">				DataSources.destroy(cpds);</span>
+<span class="nc" id="L217">			} catch (SQLException e) {</span>
+<span class="nc" id="L218">				e.printStackTrace();</span>
+			}
+		}
+<span class="nc" id="L221">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

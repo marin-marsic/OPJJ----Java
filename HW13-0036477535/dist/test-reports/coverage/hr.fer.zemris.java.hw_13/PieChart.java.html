@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PieChart.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">HW13-0036477535</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.hw_13</a> &gt; <span class="el_source">PieChart.java</span></div><h1>PieChart.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.hw_13;
+
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+import org.jfree.util.Rotation;
+
+/**
+ * Servlet for creating some image of some pie chart.
+ * 
+ * @author Marin Maršić
+ *
+ */
+@WebServlet(urlPatterns = { &quot;/reportImage&quot; })
+<span class="nc" id="L27">public class PieChart extends HttpServlet {</span>
+
+	/**
+	 * Default serial version UID.
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+
+		// This will create the dataset
+<span class="nc" id="L39">		PieDataset dataset = createDataset();</span>
+		// based on the dataset we create the chart
+<span class="nc" id="L41">		JFreeChart chart = createChart(dataset, &quot;&quot;);</span>
+		// we put the chart into a panel
+<span class="nc" id="L43">		ChartPanel chartPanel = new ChartPanel(chart);</span>
+		// default size
+<span class="nc" id="L45">		chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));</span>
+
+<span class="nc" id="L47">		ImageIO.write(chart.createBufferedImage(500, 270), &quot;png&quot;,</span>
+<span class="nc" id="L48">				resp.getOutputStream());</span>
+<span class="nc" id="L49">	}</span>
+
+	/**
+	 * Creates data for the chart.
+	 * 
+	 * @return Returns created {@link PieDataset}.
+	 */
+	private PieDataset createDataset() {
+<span class="nc" id="L57">		DefaultPieDataset result = new DefaultPieDataset();</span>
+<span class="nc" id="L58">		result.setValue(&quot;Linux&quot;, 29);</span>
+<span class="nc" id="L59">		result.setValue(&quot;Mac&quot;, 20);</span>
+<span class="nc" id="L60">		result.setValue(&quot;Windows&quot;, 51);</span>
+<span class="nc" id="L61">		return result;</span>
+
+	}
+
+	/**
+	 * Creates chart.
+	 * 
+	 * @param dataset
+	 *            Data for the chart.
+	 * @param title
+	 *            Title of the chart.
+	 * @return {@link JFreeChart} instance.
+	 */
+	private JFreeChart createChart(PieDataset dataset, String title) {
+
+<span class="nc" id="L76">		JFreeChart chart = ChartFactory.createPieChart3D(title, dataset, true,</span>
+<span class="nc" id="L77">				true, false);</span>
+
+<span class="nc" id="L79">		PiePlot3D plot = (PiePlot3D) chart.getPlot();</span>
+<span class="nc" id="L80">		plot.setStartAngle(290);</span>
+<span class="nc" id="L81">		plot.setDirection(Rotation.CLOCKWISE);</span>
+<span class="nc" id="L82">		plot.setForegroundAlpha(0.5f);</span>
+<span class="nc" id="L83">		return chart;</span>
+
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

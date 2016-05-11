@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GlasanjeServlet.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">HW13-0036477535</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.hw_13.voting</a> &gt; <span class="el_source">GlasanjeServlet.java</span></div><h1>GlasanjeServlet.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.hw_13.voting;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet which gives user few choices to vote for.
+ * 
+ * @author Marin Maršić
+ *
+ */
+@WebServlet(urlPatterns = { &quot;/glasanje&quot; })
+<span class="nc" id="L24">public class GlasanjeServlet extends HttpServlet {</span>
+
+	/**
+	 * Default serial version UID.
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+
+<span class="nc" id="L35">		String fileName = req.getServletContext().getRealPath(</span>
+<span class="nc" id="L36">				&quot;/WEB-INF/glasanje-definicija.txt&quot;);</span>
+
+<span class="nc" id="L38">		List&lt;String&gt; lines = Files.readAllLines(Paths.get(fileName),</span>
+<span class="nc" id="L39">				StandardCharsets.UTF_8);</span>
+<span class="nc" id="L40">		Map&lt;String, Band&gt; map = new TreeMap&lt;&gt;();</span>
+
+<span class="nc bnc" id="L42" title="All 2 branches missed.">		for (String line : lines) {</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">			if (!line.trim().isEmpty()) {</span>
+<span class="nc" id="L44">				Band band = new Band(line);</span>
+<span class="nc" id="L45">				map.put(band.getiD(), band);</span>
+			}
+		}
+
+<span class="nc" id="L49">		req.getServletContext().setAttribute(&quot;bendovi&quot;, map);</span>
+<span class="nc" id="L50">		req.getRequestDispatcher(&quot;/WEB-INF/pages/glasanjeIndex.jsp&quot;).forward(</span>
+<span class="nc" id="L51">				req, resp);</span>
+<span class="nc" id="L52">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

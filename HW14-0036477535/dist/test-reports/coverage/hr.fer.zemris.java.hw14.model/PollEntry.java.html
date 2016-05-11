@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PollEntry.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">HW14-0036477535</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.hw14.model</a> &gt; <span class="el_source">PollEntry.java</span></div><h1>PollEntry.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.hw14.model;
+
+/**
+ * Class representing Polls entries.
+ * 
+ * @author Marin Maršić
+ *
+ */
+public class PollEntry {
+	/**
+	 * ID of the poll.
+	 */
+	private long id;
+	/**
+	 * Title of the poll.
+	 */
+	private String title;
+	/**
+	 * Message of the title.
+	 */
+	private String message;
+
+	/**
+	 * Default constructor for the {@link PollEntry}.
+	 */
+<span class="fc" id="L26">	public PollEntry() {</span>
+<span class="fc" id="L27">	}</span>
+
+	/**
+	 * @return Returns ID of the poll.
+	 */
+	public long getId() {
+<span class="fc" id="L33">		return id;</span>
+	}
+
+	/**
+	 * Sets the ID of the poll.
+	 * @param id
+	 */
+	public void setId(long id) {
+<span class="fc" id="L41">		this.id = id;</span>
+<span class="fc" id="L42">	}</span>
+
+	/**
+	 * @return Returns title of the poll.
+	 */
+	public String getTitle() {
+<span class="fc" id="L48">		return title;</span>
+	}
+
+	/**
+	 * Sets the title of the poll.
+	 * @param title
+	 */
+	public void setTitle(String title) {
+<span class="fc" id="L56">		this.title = title;</span>
+<span class="fc" id="L57">	}</span>
+
+	/**
+	 * @return Returns the message of the title.
+	 */
+	public String getMessage() {
+<span class="fc" id="L63">		return message;</span>
+	}
+
+	/**
+	 * Sets the message of the title.
+	 * @param message
+	 */
+	public void setMessage(String message) {
+<span class="fc" id="L71">		this.message = message;</span>
+<span class="fc" id="L72">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PollOptionEntry.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">HW14-0036477535</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.hw14.model</a> &gt; <span class="el_source">PollOptionEntry.java</span></div><h1>PollOptionEntry.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.hw14.model;
+
+/**
+ * Class representing PollOptions entries.
+ * 
+ * @author Marin Maršić
+ *
+ */
+public class PollOptionEntry {
+	/**
+	 * PollOptions entry's ID.
+	 */
+	private long id;
+	/**
+	 * PollOptions entry's title.
+	 * 
+	 */
+	private String optionTitle;
+	/**
+	 * PollOptions entry's link to a video.
+	 */
+	private String optionLink;
+	/**
+	 * ID of a poll this entry belongs to.
+	 */
+	private long pollID;
+	/**
+	 * PollOptions entry's number of votes.
+	 */
+	private int votesCount;
+
+	/**
+	 * Default constructor for {@link PollOptionEntry}.
+	 */
+<span class="fc" id="L35">	public PollOptionEntry() {</span>
+<span class="fc" id="L36">	}</span>
+
+	/**
+	 * @return Returns PollOptions entry's ID.
+	 */
+	public long getId() {
+<span class="fc" id="L42">		return id;</span>
+	}
+
+	/**
+	 * @return Returns PollOptions entry's title.
+	 */
+	public String getOptionTitle() {
+<span class="fc" id="L49">		return optionTitle;</span>
+	}
+
+	/**
+	 * @return Returns PollOptions entry's link to a video.
+	 */
+	public String getOptionLink() {
+<span class="fc" id="L56">		return optionLink;</span>
+	}
+
+	/**
+	 * @return Returns ID of a poll this entry belongs to.
+	 */
+	public long getPollID() {
+<span class="fc" id="L63">		return pollID;</span>
+	}
+
+	/**
+	 * @return Returns entry's number of votes.
+	 */
+	public int getVotesCount() {
+<span class="fc" id="L70">		return votesCount;</span>
+	}
+
+	/**
+	 * Sets the PollOptions entry's ID.
+	 * 
+	 * @param id
+	 */
+	public void setId(long id) {
+<span class="fc" id="L79">		this.id = id;</span>
+<span class="fc" id="L80">	}</span>
+
+	/**
+	 * Sets the PollOptions entry's title.
+	 * 
+	 * @param optionTitle
+	 */
+	public void setOptionTitle(String optionTitle) {
+<span class="fc" id="L88">		this.optionTitle = optionTitle;</span>
+<span class="fc" id="L89">	}</span>
+
+	/**
+	 * Sets the PollOptions entry's link to a video.
+	 * 
+	 * @param optionLink
+	 */
+	public void setOptionLink(String optionLink) {
+<span class="fc" id="L97">		this.optionLink = optionLink;</span>
+<span class="fc" id="L98">	}</span>
+
+	/**
+	 * Sets the ID of a poll this entry belongs to.
+	 * 
+	 * @param pollID
+	 */
+	public void setPollID(long pollID) {
+<span class="fc" id="L106">		this.pollID = pollID;</span>
+<span class="fc" id="L107">	}</span>
+
+	/**
+	 * Sets the PollOptions entry's number of votes.
+	 * 
+	 * @param votesCount
+	 */
+	public void setVotesCount(int votesCount) {
+<span class="fc" id="L115">		this.votesCount = votesCount;</span>
+<span class="fc" id="L116">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

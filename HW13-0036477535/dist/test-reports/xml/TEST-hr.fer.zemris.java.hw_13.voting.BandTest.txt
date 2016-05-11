@@ -1,0 +1,5 @@
+Testsuite: hr.fer.zemris.java.hw_13.voting.BandTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0,088 sec
+
+Testcase: Constructor_1_test took 0,008 sec
+Testcase: Constructor_2_test took 0 sec

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SQLDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">HW14-0036477535</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.hw14.dao.sql</a> &gt; <span class="el_source">SQLDAO.java</span></div><h1>SQLDAO.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.hw14.dao.sql;
+
+import hr.fer.zemris.java.hw14.dao.DAO;
+import hr.fer.zemris.java.hw14.dao.DAOException;
+import hr.fer.zemris.java.hw14.model.PollEntry;
+import hr.fer.zemris.java.hw14.model.PollOptionEntry;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Implementation of the DAO system using the SQL technology.
+ * 
+ * @author Marin Maršić
+ */
+<span class="nc" id="L19">public class SQLDAO implements DAO {</span>
+
+	@Override
+	public List&lt;PollEntry&gt; fetchAllPolls() throws DAOException {
+<span class="nc" id="L23">		List&lt;PollEntry&gt; entries = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L24">		Connection con = SQLConnectionProvider.getConnection();</span>
+<span class="nc" id="L25">		PreparedStatement pst = null;</span>
+		try {
+<span class="nc" id="L27">			pst = con</span>
+<span class="nc" id="L28">					.prepareStatement(&quot;select id, title, message from Polls order by id&quot;);</span>
+			try {
+<span class="nc" id="L30">				ResultSet rs = pst.executeQuery();</span>
+				try {
+<span class="nc bnc" id="L32" title="All 4 branches missed.">					while (rs != null &amp;&amp; rs.next()) {</span>
+<span class="nc" id="L33">						PollEntry entry = new PollEntry();</span>
+<span class="nc" id="L34">						entry.setId(rs.getLong(1));</span>
+<span class="nc" id="L35">						entry.setTitle(rs.getString(2));</span>
+<span class="nc" id="L36">						entry.setMessage(rs.getString(3));</span>
+<span class="nc" id="L37">						entries.add(entry);</span>
+					}
+<span class="nc" id="L39">				} finally {</span>
+					try {
+<span class="nc" id="L41">						rs.close();</span>
+<span class="nc" id="L42">					} catch (Exception ignorable) {</span>
+					}
+<span class="nc" id="L44">				}</span>
+<span class="nc" id="L45">			} finally {</span>
+				try {
+<span class="nc" id="L47">					pst.close();</span>
+<span class="nc" id="L48">				} catch (Exception ignorable) {</span>
+				}
+<span class="nc" id="L50">			}</span>
+<span class="nc" id="L51">		} catch (Exception ex) {</span>
+<span class="nc" id="L52">			throw new DAOException(&quot;Error while getting polls from database.&quot;,</span>
+<span class="nc" id="L53">					ex);</span>
+		}
+<span class="nc" id="L55">		return entries;</span>
+	}
+
+	@Override
+	public List&lt;PollOptionEntry&gt; fetchAllPollOptions(long pollID)
+			throws DAOException {
+<span class="nc" id="L61">		List&lt;PollOptionEntry&gt; entries = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L62">		Connection con = SQLConnectionProvider.getConnection();</span>
+<span class="nc" id="L63">		PreparedStatement pst = null;</span>
+		try {
+<span class="nc" id="L65">			pst = con</span>
+<span class="nc" id="L66">					.prepareStatement(&quot;select id, optionTitle, optionLink, pollID, votesCount from PollOptions order by id&quot;);</span>
+			try {
+<span class="nc" id="L68">				ResultSet rs = pst.executeQuery();</span>
+				try {
+<span class="nc bnc" id="L70" title="All 4 branches missed.">					while (rs != null &amp;&amp; rs.next()) {</span>
+<span class="nc" id="L71">						PollOptionEntry entry = new PollOptionEntry();</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">						if (rs.getLong(4) == pollID) {</span>
+<span class="nc" id="L73">							entry.setId(rs.getLong(1));</span>
+<span class="nc" id="L74">							entry.setOptionTitle(rs.getString(2));</span>
+<span class="nc" id="L75">							entry.setOptionLink(rs.getString(3));</span>
+<span class="nc" id="L76">							entry.setPollID(rs.getLong(4));</span>
+<span class="nc" id="L77">							entry.setVotesCount(rs.getInt(5));</span>
+<span class="nc" id="L78">							entries.add(entry);</span>
+						}
+					}
+<span class="nc" id="L81">				} finally {</span>
+					try {
+<span class="nc" id="L83">						rs.close();</span>
+<span class="nc" id="L84">					} catch (Exception ignorable) {</span>
+					}
+<span class="nc" id="L86">				}</span>
+<span class="nc" id="L87">			} finally {</span>
+				try {
+<span class="nc" id="L89">					pst.close();</span>
+<span class="nc" id="L90">				} catch (Exception ignorable) {</span>
+				}
+<span class="nc" id="L92">			}</span>
+<span class="nc" id="L93">		} catch (Exception ex) {</span>
+<span class="nc" id="L94">			throw new DAOException(&quot;Error while getting polls from database.&quot;,</span>
+<span class="nc" id="L95">					ex);</span>
+		}
+<span class="nc" id="L97">		return entries;</span>
+	}
+
+	@Override
+	public void updateVote(int pollID, int pollOption) throws DAOException {
+<span class="nc" id="L102">		Connection con = SQLConnectionProvider.getConnection();</span>
+<span class="nc" id="L103">		PreparedStatement pst = null;</span>
+		try {
+<span class="nc" id="L105">			pst = con</span>
+<span class="nc" id="L106">					.prepareStatement(&quot;UPDATE PollOptions set votesCount=votesCount+1 WHERE id=? AND pollID=?&quot;);</span>
+<span class="nc" id="L107">			pst.setInt(1, pollOption);</span>
+<span class="nc" id="L108">			pst.setInt(2, pollID);</span>
+			
+<span class="nc" id="L110">			pst.executeUpdate(); </span>
+
+			try {
+<span class="nc" id="L113">				pst.close();</span>
+<span class="nc" id="L114">			} catch (Exception ignorable) {</span>
+			}
+
+<span class="nc" id="L117">		} catch (Exception ex) {</span>
+<span class="nc" id="L118">			throw new DAOException(&quot;Error while getting polls from database.&quot;,</span>
+<span class="nc" id="L119">					ex);</span>
+		}
+<span class="nc" id="L121">	}</span>
+
+	@Override
+	public List&lt;PollOptionEntry&gt; poolResults(long pollID) throws DAOException {
+<span class="nc" id="L125">		List&lt;PollOptionEntry&gt; entries = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L126">		Connection con = SQLConnectionProvider.getConnection();</span>
+<span class="nc" id="L127">		PreparedStatement pst = null;</span>
+		try {
+<span class="nc" id="L129">			pst = con</span>
+<span class="nc" id="L130">					.prepareStatement(&quot;select id, optionTitle, optionLink, pollID, votesCount from PollOptions order by votesCount DESC&quot;);</span>
+			try {
+<span class="nc" id="L132">				ResultSet rs = pst.executeQuery();</span>
+				try {
+<span class="nc bnc" id="L134" title="All 4 branches missed.">					while (rs != null &amp;&amp; rs.next()) {</span>
+<span class="nc" id="L135">						PollOptionEntry entry = new PollOptionEntry();</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">						if (rs.getLong(4) == pollID) {</span>
+<span class="nc" id="L137">							entry.setId(rs.getLong(1));</span>
+<span class="nc" id="L138">							entry.setOptionTitle(rs.getString(2));</span>
+<span class="nc" id="L139">							entry.setOptionLink(rs.getString(3));</span>
+<span class="nc" id="L140">							entry.setPollID(rs.getLong(4));</span>
+<span class="nc" id="L141">							entry.setVotesCount(rs.getInt(5));</span>
+<span class="nc" id="L142">							entries.add(entry);</span>
+						}
+					}
+<span class="nc" id="L145">				} finally {</span>
+					try {
+<span class="nc" id="L147">						rs.close();</span>
+<span class="nc" id="L148">					} catch (Exception ignorable) {</span>
+					}
+<span class="nc" id="L150">				}</span>
+<span class="nc" id="L151">			} finally {</span>
+				try {
+<span class="nc" id="L153">					pst.close();</span>
+<span class="nc" id="L154">				} catch (Exception ignorable) {</span>
+				}
+<span class="nc" id="L156">			}</span>
+<span class="nc" id="L157">		} catch (Exception ex) {</span>
+<span class="nc" id="L158">			throw new DAOException(&quot;Error while getting polls from database.&quot;,</span>
+<span class="nc" id="L159">					ex);</span>
+		}
+<span class="nc" id="L161">		return entries;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

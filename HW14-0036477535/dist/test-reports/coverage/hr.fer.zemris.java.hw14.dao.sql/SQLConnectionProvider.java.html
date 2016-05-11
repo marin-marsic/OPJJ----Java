@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SQLConnectionProvider.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">HW14-0036477535</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.hw14.dao.sql</a> &gt; <span class="el_source">SQLConnectionProvider.java</span></div><h1>SQLConnectionProvider.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.hw14.dao.sql;
+
+import java.sql.Connection;
+
+/**
+ * Class for storing the connections towards the database into {@link ThreadLocal} object.
+ * 
+ * @author Marin Maršić
+ *
+ */
+<span class="nc" id="L11">public class SQLConnectionProvider {</span>
+
+	/**
+	 * Connections towards the database.
+	 */
+<span class="nc" id="L16">	private static ThreadLocal&lt;Connection&gt; connections = new ThreadLocal&lt;&gt;();</span>
+	
+	/**
+	 * Set connection for the current thread (or remove record from the map if the argument is null).
+	 * 
+	 * @param con Connection towards the database.
+	 */
+	public static void setConnection(Connection con) {
+<span class="nc bnc" id="L24" title="All 2 branches missed.">		if(con==null) {</span>
+<span class="nc" id="L25">			connections.remove();</span>
+<span class="nc" id="L26">		} else {</span>
+<span class="nc" id="L27">			connections.set(con);</span>
+		}
+<span class="nc" id="L29">	}</span>
+	
+	/**
+	 * Get the connection which is available for usage by the current thread.
+	 * 
+	 * @return Connection towards the database.
+	 */
+	public static Connection getConnection() {
+<span class="nc" id="L37">		return connections.get();</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>
